@@ -20,7 +20,7 @@ function generateItemElement(item, itemIndex, template) {
         <button class="shopping-item-toggle js-item-toggle">
             <span class="button-label">check</span>
         </button>
-        <button class="shopping-item-edit" 
+        <button class="shopping-item-edit js-item-edit" 
           <span class"button-label">edit</span>
         </button>
         <button class="shopping-item-delete js-item-delete">
@@ -51,6 +51,10 @@ function renderShoppingList() {
   if (STORE.search) {
     items = STORE.items.filter(item => item.name.includes(STORE.search));
   }
+  if (STORE.edit) {
+    edits();
+    //items = STORE.items.splice(itemIndex, 1, edit);
+  }
   const shoppingListItemsString = generateShoppingItemsString(items); // changes paramater to items 
 
   // insert that HTML into the DOM
@@ -60,7 +64,7 @@ function renderShoppingList() {
 
 function addItemToShoppingList(itemName) {
   console.log(`Adding "${itemName}" to shopping list`);
-  STORE.items.push({name: itemName, checked: false});
+  STORE.items.push({name: itemName, checked: false, edit: false});
 }
 
 function handleNewItemSubmit() {
@@ -150,13 +154,30 @@ function handleSearchBar() {
   
 }
 
+function toggleEditItem(itemIndex) {
+  console.log('Toggling edit name property for item at index ' + itemIndex);
+  STORE.edit = !STORE.edit; //might be redundent
+}
+
+function edits(itemIndex,edit){
+  STORE.items.splice(itemIndex, 1, edit);
+} 
 
 
 
 function handleItemEdit() {
-  $
-  
+  $('.js-shopping-list').on('click', '.js-item-edit', event => {
+    console.log('`handleItemEdit` ran');
+    const edit = prompt('Edit item');
+    const itemIndex = getItemIndexFromElement(event.currentTarget);
+    console.log(itemIndex);
+    //edits(itemIndex,edit);
+    toggleEditItem(itemIndex);
+    renderShoppingList(edits(itemIndex, edit));
+  });
 }
+
+
 
 // this function will be our callback when the page loads. it's responsible for
 // initially rendering the shopping list, and activating our individual functions
@@ -169,6 +190,7 @@ function handleShoppingList() {
   handleDeleteItemClicked();
   handleCheckBoxToggle();
   handleSearchBar();
+  handleItemEdit();
 }
 
 // when the page loads, call `handleShoppingList`
