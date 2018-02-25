@@ -9,12 +9,13 @@ const STORE = { // changed store to an object
     { name: 'bread', checked: false }
   ],
   filter: false, // added checktoggle funcationality
+  search: '', //added search
 };
 
 function generateItemElement(item, itemIndex, template) {
   return `
     <li class="js-item-index-element" data-item-index="${itemIndex}">
-      <span class="shopping-item js-shopping-item ${item.checked ? "shopping-item__checked" : ''}">${item.name}</span>
+      <span class="shopping-item js-shopping-item ${item.checked ? 'shopping-item__checked' : ''}">${item.name}</span>
       <div class="shopping-item-controls">
         <button class="shopping-item-toggle js-item-toggle">
             <span class="button-label">check</span>
@@ -28,7 +29,7 @@ function generateItemElement(item, itemIndex, template) {
 
 
 function generateShoppingItemsString(shoppingList) {
-  console.log("Generating shopping list element");
+  console.log('Generating shopping list element');
 
   const items = shoppingList.map((item, index) => generateItemElement(item, index));
   
@@ -44,6 +45,9 @@ function renderShoppingList() {
   if (STORE.filter) {
     items = STORE.items.filter(item => !item.checked);
   }
+  if (STORE.search) {
+    items = STORE.items.filter(item => item.name.includes(STORE.search));
+  }
   const shoppingListItemsString = generateShoppingItemsString(items); // changes paramater to items 
 
   // insert that HTML into the DOM
@@ -53,7 +57,7 @@ function renderShoppingList() {
 
 function addItemToShoppingList(itemName) {
   console.log(`Adding "${itemName}" to shopping list`);
-  STORE.push({name: itemName, checked: false});
+  STORE.items.push({name: itemName, checked: false});
 }
 
 function handleNewItemSubmit() {
@@ -68,7 +72,7 @@ function handleNewItemSubmit() {
 }
 
 function toggleCheckedForListItem(itemIndex) {
-  console.log("Toggling checked property for item at index " + itemIndex);
+  console.log('Toggling checked property for item at index ' + itemIndex);
   STORE.items[itemIndex].checked = !STORE.items[itemIndex].checked;
   //refrence STORE as an object now
 }
@@ -82,7 +86,7 @@ function getItemIndexFromElement(item) {
 }
 
 function handleItemCheckClicked() {
-  $('.js-shopping-list').on('click', `.js-item-toggle`, event => {
+  $('.js-shopping-list').on('click', '.js-item-toggle', event => {
     console.log('`handleItemCheckClicked` ran');
     const itemIndex = getItemIndexFromElement(event.currentTarget);
     toggleCheckedForListItem(itemIndex);
@@ -97,13 +101,13 @@ function deleteListItem(itemIndex) {
 }
 
 function handleDeleteItemClicked() {
-  $('.js-shopping-list').on('click', `.js-item-delete`, event => {
+  $('.js-shopping-list').on('click', '.js-item-delete', event => {
     console.log('`handleItemCheckDelete` ran');
     const itemIndex = getItemIndexFromElement(event.currentTarget);
     deleteListItem(itemIndex);
     renderShoppingList();
   });
-  console.log('`handleDeleteItemClicked` ran')
+  console.log('`handleDeleteItemClicked` ran');
 }
 
 function showChecked() {
@@ -121,6 +125,28 @@ function handleCheckBoxToggle() {
   });
 }
 
+// very similar to addItemToShoppingList(newItemName); & handlecheckbox
+// listens for input and assigns the user input to searchItem then renders only the items that match the name property within store
+
+function search(input) {
+  console.log('search toggle');
+  STORE.search = input;
+}
+
+function handleSearchBar() {
+  $('#shopping-list-search').click(event => {
+    event.preventDefault();
+    console.log('search bar clicked');
+    let searchItem = $('.search-entry').val();
+    $('.search-entry').val('');
+    console.log(searchItem);
+    search(searchItem);
+    renderShoppingList();
+    
+  });
+  
+}
+
 // this function will be our callback when the page loads. it's responsible for
 // initially rendering the shopping list, and activating our individual functions
 // that handle new item submission and user clicks on the "check" and "delete" buttons
@@ -131,6 +157,7 @@ function handleShoppingList() {
   handleItemCheckClicked();
   handleDeleteItemClicked();
   handleCheckBoxToggle();
+  handleSearchBar();
 }
 
 // when the page loads, call `handleShoppingList`
