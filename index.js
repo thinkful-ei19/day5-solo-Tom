@@ -8,7 +8,7 @@ const STORE = { // changed store to an object
     { name: 'milk', checked: true },
     { name: 'bread', checked: false }
   ],
-  filter: false, // added checktoggle funcationality
+  filter: false, // added checktoggle functionality
   search: '', //added search
 };
 
@@ -50,10 +50,6 @@ function renderShoppingList() {
   }
   if (STORE.search) {
     items = STORE.items.filter(item => item.name.includes(STORE.search));
-  }
-  if (STORE.edit) {
-    edits();
-    //items = STORE.items.splice(itemIndex, 1, edit);
   }
   const shoppingListItemsString = generateShoppingItemsString(items); // changes paramater to items 
 
@@ -155,25 +151,21 @@ function handleSearchBar() {
 }
 
 function toggleEditItem(itemIndex) {
-  console.log('Toggling edit name property for item at index ' + itemIndex);
-  STORE.edit = !STORE.edit; //might be redundent
+  //console.log('Toggling edit name property for item at index ' + itemIndex);
+  STORE.edit = !STORE.edit; //might be pointless
 }
-
-function edits(itemIndex,edit){
-  STORE.items.splice(itemIndex, 1, edit);
-} 
-
-
 
 function handleItemEdit() {
   $('.js-shopping-list').on('click', '.js-item-edit', event => {
     console.log('`handleItemEdit` ran');
-    const edit = prompt('Edit item');
+    let edit = prompt('Edit item');
     const itemIndex = getItemIndexFromElement(event.currentTarget);
     console.log(itemIndex);
-    //edits(itemIndex,edit);
+    let newItem = STORE.items[itemIndex];
+    console.log(newItem);
+    newItem.name = edit;
     toggleEditItem(itemIndex);
-    renderShoppingList(edits(itemIndex, edit));
+    renderShoppingList(newItem);
   });
 }
 

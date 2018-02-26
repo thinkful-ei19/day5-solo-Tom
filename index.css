@@ -4,6 +4,7 @@
 
 body {
   font-family: 'Roboto', sans-serif;
+  background-image: url("notebook_paper.jpg");
 }
 
 button, input[type="text"] {
@@ -52,3 +53,4 @@ button:hover {
 .checkbox {
   margin-bottom: 20px;
 }
+
